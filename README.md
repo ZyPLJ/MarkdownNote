@@ -7,9 +7,9 @@ Windows 桌面 Markdown 便签。轻量、可置顶，预览为主，支持图�
 
 ## 截图
 
-| 便签预览 | 历史面板 | 图片插入 |
+| 便签预览 | 回收站 | 历史预览 |
 |:---:|:---:|:---:|
-| ![便签预览](Image/1.png) | ![历史面板](Image/2.png) | ![图片插入](Image/3.png) |
+| ![便签预览](Image/1.png) | ![回收站](Image/2.png) | ![历史预览](Image/3.png) |
 
 ## 下载
 
@@ -31,6 +31,17 @@ Windows 桌面 Markdown 便签。轻量、可置顶，预览为主，支持图�
 - **系统托盘**：新建、历史、显示/隐藏全部、退出
 - **关闭 = 隐藏**（数据保留）；删除为软删除，可在回收站恢复
 - **本地存储**：JSON 自动保存（防抖 500ms + 原子写）
+
+## 技术栈
+
+| 层级 | 技术 |
+|------|------|
+| 桌面壳 | [Electron](https://www.electronjs.org/) 35 |
+| 构建 | [electron-vite](https://electron-vite.org/) · [Vite](https://vitejs.dev/) 6 · TypeScript |
+| UI | [Vue](https://vuejs.org/) 3 · [Pinia](https://pinia.vuejs.org/) · [Tailwind CSS](https://tailwindcss.com/) 3 |
+| 编辑器 | [CodeMirror](https://codemirror.net/) 6（`@codemirror/lang-markdown`） |
+| Markdown | [markdown-it](https://github.com/markdown-it/markdown-it) · markdown-it-task-lists · [highlight.js](https://highlightjs.org/) |
+| 打包发布 | [electron-builder](https://www.electron.build/)（NSIS 安装包）· GitHub Actions |
 
 ## 开发
 
