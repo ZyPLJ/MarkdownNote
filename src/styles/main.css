@@ -1,0 +1,273 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+  user-select: none;
+}
+
+/* Allow text selection in content areas */
+.note-content,
+.note-content * {
+  user-select: text;
+}
+
+.cm-editor {
+  height: 100%;
+  outline: none !important;
+  font-size: 14px;
+  background: transparent !important;
+}
+
+.cm-scroller {
+  font-family: 'Cascadia Code', Consolas, 'Courier New', monospace !important;
+  line-height: 1.55 !important;
+  overflow: auto !important;
+}
+
+.cm-content {
+  padding: 12px 14px !important;
+  caret-color: #333;
+}
+
+.cm-focused {
+  outline: none !important;
+}
+
+/* Markdown preview typography */
+.md-preview {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #2c2c2c;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+.md-preview h1,
+.md-preview h2,
+.md-preview h3,
+.md-preview h4 {
+  font-weight: 700;
+  margin: 0.6em 0 0.35em;
+  line-height: 1.3;
+}
+
+.md-preview h1 {
+  font-size: 1.45em;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  padding-bottom: 0.2em;
+}
+
+.md-preview h2 {
+  font-size: 1.25em;
+}
+
+.md-preview h3 {
+  font-size: 1.1em;
+}
+
+.md-preview p {
+  margin: 0.45em 0;
+}
+
+.md-preview ul,
+.md-preview ol {
+  margin: 0.4em 0;
+  padding-left: 1.5em;
+}
+
+/* Nested lists: larger step so multi-level hierarchy is obvious */
+.md-preview ul ul,
+.md-preview ol ol,
+.md-preview ul ol,
+.md-preview ol ul {
+  margin: 0.12em 0;
+  padding-left: 1.35em;
+}
+
+.md-preview li {
+  margin: 0.15em 0;
+}
+
+/* Task lists: no bullet; don't use negative margin (it cancels nest indent) */
+.md-preview li.task-list-item {
+  list-style: none;
+  position: relative;
+}
+
+/* Top-level task list: flush left (no empty bullet gutter) */
+.md-preview-body > ul.contains-task-list,
+.md-preview-body > ol.contains-task-list {
+  padding-left: 0.1em;
+}
+
+/* Nested under a task item: clear step indent (~1.5 checkbox widths) */
+.md-preview li.task-list-item > ul,
+.md-preview li.task-list-item > ol {
+  margin-top: 0.12em;
+  margin-bottom: 0.12em;
+  padding-left: 1.7em;
+}
+
+.md-preview li.task-list-item input[type='checkbox'] {
+  margin: 0 0.45em 0 0;
+  vertical-align: -0.1em;
+  cursor: pointer;
+}
+
+.md-preview blockquote {
+  margin: 0.5em 0;
+  padding: 0.25em 0.75em;
+  border-left: 3px solid rgba(0, 0, 0, 0.2);
+  color: #555;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.md-preview code {
+  font-family: 'Cascadia Code', Consolas, 'Courier New', monospace;
+  font-size: 0.9em;
+  background: rgba(0, 0, 0, 0.06);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+}
+
+.md-preview pre {
+  margin: 0.55em 0;
+  padding: 0.7em 0.85em;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+  overflow: auto;
+}
+
+.md-preview pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 0.85em;
+  line-height: 1.5;
+}
+
+.md-preview a {
+  color: #1565c0;
+  text-decoration: underline;
+}
+
+.md-preview table {
+  border-collapse: collapse;
+  margin: 0.5em 0;
+  width: 100%;
+  font-size: 0.92em;
+}
+
+.md-preview th,
+.md-preview td {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 0.3em 0.55em;
+  text-align: left;
+}
+
+.md-preview th {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.md-preview hr {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  margin: 0.8em 0;
+}
+
+.md-preview img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  display: block;
+  margin: 0.5em 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.md-preview img[src^="attach://"] {
+  background: rgba(0, 0, 0, 0.03);
+  min-height: 24px;
+}
+
+/* Color themes for note chrome */
+.note-yellow {
+  --note-bg: #fff9c4;
+  --note-bar: #f9a825;
+  --note-border: #f0e68c;
+}
+.note-pink {
+  --note-bg: #fce4ec;
+  --note-bar: #ec407a;
+  --note-border: #f8bbd0;
+}
+.note-blue {
+  --note-bg: #e3f2fd;
+  --note-bar: #42a5f5;
+  --note-border: #bbdefb;
+}
+.note-green {
+  --note-bg: #e8f5e9;
+  --note-bar: #66bb6a;
+  --note-border: #c8e6c9;
+}
+.note-purple {
+  --note-bg: #f3e5f5;
+  --note-bar: #ab47bc;
+  --note-border: #e1bee7;
+}
+.note-gray {
+  --note-bg: #f5f5f5;
+  --note-bar: #9e9e9e;
+  --note-border: #e0e0e0;
+}
+
+/* Title bar drag region */
+.drag-region {
+  -webkit-app-region: drag;
+}
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* Scrollbar */
+.note-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.note-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+.note-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.28);
+}
+
+/* Line clamp helper (history snippets) */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Hide native search clear on WebKit so our own button wins */
+input[type='search']::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+/* Highlight.js minimal overrides for sticky notes */
+.hljs {
+  background: transparent !important;
+  color: #24292e;
+}
