@@ -5,6 +5,12 @@ Windows 桌面 Markdown 便签。轻量、可置顶，预览为主，支持图�
 [![Release](https://img.shields.io/github/v/release/ZyPLJ/MarkdownNote?include_prereleases&label=Release)](https://github.com/ZyPLJ/MarkdownNote/releases/latest)
 [![Build](https://img.shields.io/github/actions/workflow/status/ZyPLJ/MarkdownNote/release.yml?label=Build)](https://github.com/ZyPLJ/MarkdownNote/actions)
 
+## 截图
+
+| 便签预览 | 历史面板 |
+|:---:|:---:|
+| ![便签预览](Image/1.png) | ![历史面板](Image/2.png) |
+
 ## 下载
 
 到 [Releases](https://github.com/ZyPLJ/MarkdownNote/releases/latest) 下载 Windows 安装包：
