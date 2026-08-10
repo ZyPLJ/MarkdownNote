@@ -1,9 +1,9 @@
 # Windows Markdown 桌面便签 — 设计方案
 
 > 应用名：**便签**
-> 状态：一期完成，二期核心能力完成（历史 + 图片）
+> 状态：一期完成，二期核心能力完成（历史 + 图片 + 文本高亮）
 > 创建：2026-07-17
-> 更新：2026-07-20
+> 更新：2026-08-10
 
 ---
 
@@ -78,6 +78,7 @@
    - 代码块 + 语法高亮
    - 链接、引用、表格、分割线
    - 行内代码、图片（`attach://`）
+   - **文本高亮标记** `==颜色:文本==`（荧光笔，6 色白名单；无前缀默认黄）
 
 4. **便签管理**
    - 新建 / 软删除 / 复制
@@ -110,6 +111,12 @@
   - 多图顺序插入
   - 大图自动缩放 / 转 JPEG（GIF/SVG 原样）
   - MIME → 扩展名修正；`attach://` 特权协议 + 路径穿越防护
+- ~~文本高亮标记~~ ✅
+  - **编辑模式**：CodeMirror 选中文字右键 → 6 色荧光笔色板 / 透明取消块；跨行逐行包裹（行首尾空白留在 `==` 外）
+  - **预览模式**：DOM 选区 → 源码位置映射（块级 `data-line` 行号 + 行内语法剥离偏移映射）→ 写回源码走既有保存链路
+  - 语法 `==颜色:文本==`（黄/绿/蓝/粉/橙/红白名单），渲染为 `<mark class="hl-x">`；内容支持嵌套粗斜体/代码/链接
+  - 标记内换色 = 替换颜色前缀；「移除标记」/透明色块取消；标题与摘要派生时自动剥离 `==…==` 语法
+  - 已知边界：markdown-it-task-lists 的 label 模式会显示整行源码并破坏行尾嵌套语法，故任务行采用无 label 渲染
 - 导出单条为 `.md` / 全部备份 zip — ⏳
 - 开机自启 — ⏳
 - 暗色/亮色跟随系统 — ⏳
@@ -174,7 +181,7 @@
     {
       "id": "uuid",
       "title": "会议待办",
-      "content": "# 会议待办\n- [ ] 写方案\n![截图](attach://uuid.jpg)",
+      "content": "# 会议待办\n- [ ] 写方案\n==yellow:重要== 明天评审\n![截图](attach://uuid.jpg)",
       "color": "yellow",
       "opacity": 0.95,
       "alwaysOnTop": true,
@@ -292,12 +299,13 @@
 │   ├── index.html / history.html
 │   ├── components/
 │   │   ├── TitleBar.vue
-│   │   ├── MarkdownEditor.vue  # CM6 + 粘贴/拖入 + 压缩
-│   │   ├── MarkdownPreview.vue # 渲染 + 双击编辑 + 粘贴/拖入
+│   │   ├── MarkdownEditor.vue  # CM6 + 粘贴/拖入 + 压缩 + 右键高亮
+│   │   ├── MarkdownPreview.vue # 渲染 + 双击编辑 + 粘贴/拖入 + 选区映射高亮
+│   │   ├── HighlightMenu.vue   # 荧光笔色板（6 色 + 透明取消）
 │   │   └── HistoryPanel.vue    # 历史列表（色卡 UI）
 │   ├── stores/note.ts
-│   ├── lib/markdown.ts
-│   └── styles/main.css         # 主题变量 + 预览排版
+│   ├── lib/markdown.ts         # markdown-it 实例 + 高亮 inline 规则
+│   └── styles/main.css         # 主题变量 + 预览排版 + mark 荧光笔样式
 ├── resources/
 ├── Markdown桌面便签-设计方案.md  # 本文档
 └── README.md
@@ -322,6 +330,9 @@
 | 图片压缩 | 边长 >1600 或体积 >400KB 时缩放；无透明转 JPEG 0.82；GIF/SVG 跳过 |
 | 图片协议 | `protocol.registerSchemesAsPrivileged` + `protocol.handle('attach')`；文件名消毒 |
 | 历史视觉 | 复用 `note-*` CSS 变量；列表项动态 `note-{color}` class |
+| 高亮渲染 | markdown-it 自定义 inline 规则（`ruler.before('emphasis')`）匹配 `==色:内容==` → `mark_open/inline/mark_close`；`inline` 子 token 用 renderer 规则渲染 children，内容可嵌套粗斜体/代码/链接 |
+| 预览选区映射 | 块级 `data-line`（`token.map` 行号）锚定 + 行内语法剥离（`stripInline` 生成 `{text, offsets}`）+ DOM 渲染偏移锚定重复文本；选区→源码范围→包裹写回 |
+| 标题/摘要剥离 | `deriveTitle`/`deriveSnippet` 用 `stripHighlightMarkup` 去掉 `==…==` 语法，标题栏与历史摘要不显示标记代码 |
 
 ### IPC 接口
 
@@ -367,6 +378,7 @@
 | 历史增强 | 搜索 / 回收站 / 恢复清除 / 实时刷新 | ✅ |
 | 历史视觉对齐 | 暖色外壳 + 迷你色卡列表 | ✅ |
 | 图片增强 | 预览粘贴、拖入、多图、压缩、MIME 修正 | ✅ |
+| 文本高亮 | 编辑/预览右键 6 色荧光笔、嵌套格式、换色/移除、预览选区映射 | ✅ |
 | 导出 | 单条 `.md` / 全部备份 zip | ⏳ |
 | 开机自启 | `app.setLoginItemSettings` | ⏳ |
 | 暗色模式 | 跟随系统 | ⏳ |

@@ -25,6 +25,7 @@ Windows 桌面 Markdown 便签。轻量、可置顶，预览为主，支持图�
 
 - **多便签窗口**：无边框拖拽缩放，颜色 / 置顶 / 透明度
 - **Markdown**：预览为主，双击进入编辑，`Esc` 回预览，`Ctrl+E` 切换
+- **文本高亮**：选中文字右键标记荧光笔颜色（编辑/预览模式均支持），6 色色板 + 透明取消；语法 `==颜色:文本==`，内容可嵌套粗斜体/链接
 - **任务列表**：GFM `- [ ]` / `- [x]`，预览中可直接勾选，支持多层级缩进
 - **图片**：预览/编辑均可 `Ctrl+V` 或拖入；多图；大图自动压缩；`attach://` 本地协议
 - **便签历史**：暖色色卡列表、搜索、全部/回收站、恢复与永久清除、实时刷新
@@ -90,6 +91,7 @@ git push origin v1.0.0
 | `Ctrl+E` | 编辑 / 预览切换 |
 | `Esc` | 编辑→预览；历史窗清空搜索或关闭 |
 | 双击内容区 | 进入编辑 |
+| 选中文本右键 | 标记荧光笔颜色（6 色 + 透明取消，编辑/预览均可） |
 | 预览中点击任务勾选框 | 勾选 / 取消任务 |
 | `Ctrl+V` / 拖入 | 插入图片（预览、编辑均可） |
 | `Ctrl+F` | 历史窗内聚焦搜索 |
@@ -106,7 +108,7 @@ git push origin v1.0.0
 ```
 electron/main/     主进程：IPC、存储、窗口、托盘、图片、协议
 electron/preload/  contextBridge API
-electron/shared/   共享类型与 deriveTitle / deriveSnippet
+electron/shared/   共享类型、deriveTitle / deriveSnippet、高亮标记常量与函数
 src/               Vue 渲染：便签窗 + 历史窗
 scripts/           Windows 打包与图标脚本
 .github/workflows/ Release 自动构建
