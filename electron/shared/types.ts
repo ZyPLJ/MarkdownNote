@@ -1,3 +1,5 @@
+import { stripHighlightMarkup } from './highlight'
+
 export type NoteColor = 'yellow' | 'pink' | 'blue' | 'green' | 'purple' | 'gray'
 
 export type NoteMode = 'preview' | 'edit'
@@ -97,9 +99,9 @@ export function deriveTitle(content: string): string {
   for (const line of lines) {
     const heading = line.match(/^#{1,6}\s+(.+)$/)
     if (heading) {
-      return heading[1].trim().slice(0, 40)
+      return stripHighlightMarkup(heading[1]).trim().slice(0, 40)
     }
-    const text = line.trim()
+    const text = stripHighlightMarkup(line.trim())
     if (text) {
       return text.replace(/^[#>*\-\d.\s\[\]xX]+/, '').trim().slice(0, 20) || '未命名便签'
     }

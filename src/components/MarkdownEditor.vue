@@ -9,6 +9,8 @@ import {
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands'
 import { markdown } from '@codemirror/lang-markdown'
 import { syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language'
+import { tryUnwrapHighlight, wrapHighlight, wrapHighlightLines } from '../../electron/shared/highlight'
+import HighlightMenu from './HighlightMenu.vue'
 
 const props = defineProps<{
   modelValue: string
@@ -24,6 +26,21 @@ const host = ref<HTMLDivElement | null>(null)
 let view: EditorView | null = null
 let suppress = false
 let pasteQueue = 0
+
+interface HighlightMenuState {
+  x: number
+  y: number
+  from: number
+  to: number
+  text: string
+  isMarked: boolean
+}
+
+const menu = ref<HighlightMenuState | null>(null)
+
+function closeMenu(): void {
+  menu.value = null
+}
 
 const MAX_EDGE = 1600
 const JPEG_QUALITY = 0.82
@@ -249,6 +266,40 @@ function insertMarkdownImage(
   editorView.focus()
 }
 
+/**
+ * 高亮标记：选区用 `==颜色:文本==` 包裹（跨行逐行包裹，
+ * 每行首尾空白保留在标记外——`==` 需紧贴非空白字符才能被渲染规则识别）。
+ * 选区本身已是一条标记（`==旧色:文本==`）时，替换颜色前缀，避免嵌套畸形。
+ */
+function applyHighlight(color: string): void {
+  if (!view || !menu.value) return
+  const { from, to, text } = menu.value
+  const plain = tryUnwrapHighlight(text)
+  const wrapped = plain !== null ? wrapHighlight(plain, color) : wrapHighlightLines(text, color)
+  view.dispatch({
+    changes: { from, to, insert: wrapped },
+    selection: { anchor: from + wrapped.length },
+    scrollIntoView: true
+  })
+  closeMenu()
+  view.focus()
+}
+
+function removeHighlight(): void {
+  if (!view || !menu.value) return
+  const { from, to, text } = menu.value
+  const plain = tryUnwrapHighlight(text)
+  if (plain !== null) {
+    view.dispatch({
+      changes: { from, to, insert: plain },
+      selection: { anchor: from + plain.length },
+      scrollIntoView: true
+    })
+  }
+  closeMenu()
+  view.focus()
+}
+
 function createState(doc: string): EditorState {
   return EditorState.create({
     doc,
@@ -264,6 +315,10 @@ function createState(doc: string): EditorState {
         {
           key: 'Escape',
           run: () => {
+            if (menu.value) {
+              closeMenu()
+              return true
+            }
             emit('escape')
             return true
           }
@@ -294,6 +349,23 @@ function createState(doc: string): EditorState {
         dragover: (e) => {
           onDragOver(e)
           return false
+        },
+        contextmenu: (e) => {
+          if (!view) return false
+          const { from, to } = view.state.selection.main
+          // 无选区 → 保留原生菜单（复制/粘贴等）
+          if (from === to) return false
+          e.preventDefault()
+          const text = view.state.doc.sliceString(from, to)
+          menu.value = {
+            x: e.clientX,
+            y: e.clientY,
+            from,
+            to,
+            text,
+            isMarked: tryUnwrapHighlight(text) !== null
+          }
+          return true
         }
       })
     ]
@@ -339,4 +411,13 @@ onBeforeUnmount(() => {
 
 <template>
   <div ref="host" class="note-content h-full overflow-hidden" />
+  <HighlightMenu
+    v-if="menu"
+    :x="menu.x"
+    :y="menu.y"
+    :has-mark="menu.isMarked"
+    @select="applyHighlight"
+    @remove="removeHighlight"
+    @close="closeMenu"
+  />
 </template>

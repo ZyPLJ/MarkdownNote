@@ -197,6 +197,7 @@ onUnmounted(() => {
         @dblclick="store.enterEdit"
         @paste-image="handlePreviewImages"
         @update-content="store.setContent"
+        @status="setStatus"
       />
 
       <!-- transient status toast -->

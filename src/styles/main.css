@@ -134,6 +134,34 @@ body,
   background: rgba(0, 0, 0, 0.03);
 }
 
+/* 高亮标记（右键标记颜色）：色值与 electron/shared/highlight.ts 的 HIGHLIGHT_COLORS 对应 */
+.md-preview mark {
+  background: #fff176;
+  color: inherit;
+  padding: 0 1px;
+  border-radius: 2px;
+}
+
+.md-preview mark.hl-green {
+  background: #c5e1a5;
+}
+
+.md-preview mark.hl-blue {
+  background: #90caf9;
+}
+
+.md-preview mark.hl-pink {
+  background: #f8bbd0;
+}
+
+.md-preview mark.hl-orange {
+  background: #ffcc80;
+}
+
+.md-preview mark.hl-red {
+  background: #ef9a9a;
+}
+
 .md-preview code {
   font-family: 'Cascadia Code', Consolas, 'Courier New', monospace;
   font-size: 0.9em;
