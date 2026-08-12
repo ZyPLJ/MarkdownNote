@@ -4,6 +4,7 @@ import { readFileSync } from 'fs'
 import { store } from './store'
 import { noteManager } from './note-manager'
 import { createTray, destroyTray } from './tray'
+import { initAutoUpdater } from './update'
 import { saveAttachImage, resolveAttachPath, extFromMime } from './image-store'
 import {
   deriveSnippet,
@@ -257,6 +258,8 @@ function boot(): void {
     createTray()
     registerHotkey()
     noteManager.restoreVisible()
+    // 启动时检查一次更新（非打包环境内部跳过）
+    initAutoUpdater()
 
     app.on('activate', () => {
       // Dock / taskbar re-activate → open history (not pop all notes)

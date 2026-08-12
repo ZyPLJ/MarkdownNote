@@ -1,5 +1,11 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type { Note, NoteColor, NotePatch, NoteSummary } from '../shared/types'
+import type {
+  Note,
+  NoteColor,
+  NotePatch,
+  NoteSummary,
+  UpdateStatusInfo
+} from '../shared/types'
 
 const api = {
   getNote: (id: string): Promise<Note | null> => ipcRenderer.invoke('note:get', id),
@@ -36,6 +42,16 @@ const api = {
     ipcRenderer.on('notes:changed', handler)
     return () => {
       ipcRenderer.removeListener('notes:changed', handler)
+    }
+  },
+  getAppVersion: (): Promise<string> => ipcRenderer.invoke('app:get-version'),
+  quitAndInstall: (): Promise<boolean> => ipcRenderer.invoke('app:quit-and-install'),
+  /** Subscribe to auto-update status; returns an unsubscribe fn. */
+  onUpdateStatus: (cb: (info: UpdateStatusInfo) => void): (() => void) => {
+    const handler = (_e: unknown, info: UpdateStatusInfo): void => cb(info)
+    ipcRenderer.on('app:update-status', handler)
+    return () => {
+      ipcRenderer.removeListener('app:update-status', handler)
     }
   }
 }

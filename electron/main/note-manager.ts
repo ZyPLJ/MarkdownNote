@@ -264,6 +264,20 @@ export class NoteManager {
     this.historyWin = null
   }
 
+  /** 历史窗（若存在）—— 优先作为更新提示的主窗口 */
+  getHistoryWindow(): BrowserWindow | null {
+    return this.historyWin && !this.historyWin.isDestroyed() ? this.historyWin : null
+  }
+
+  /** 最近创建且未销毁的便签窗（Map 保持插入序，取最后一个） */
+  getLastNoteWindow(): BrowserWindow | null {
+    let last: BrowserWindow | null = null
+    this.windows.forEach((win) => {
+      if (!win.isDestroyed()) last = win
+    })
+    return last
+  }
+
   private applyWindowIcon(win: BrowserWindow): void {
     try {
       const path = getAppIconPath()

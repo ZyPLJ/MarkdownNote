@@ -51,6 +51,13 @@ export interface NotePatch {
   deleted?: boolean
 }
 
+/** 自动更新状态（主进程 → 渲染层，通道 app:update-status） */
+export type UpdateStatusInfo =
+  | { status: 'checking' }
+  | { status: 'downloading'; percent: number }
+  | { status: 'downloaded'; version: string }
+  | { status: 'error'; message: string }
+
 /** Lightweight row for history panel list */
 export interface NoteSummary {
   id: string

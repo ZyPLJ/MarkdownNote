@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useNoteStore } from './stores/note'
+import { setupUpdatePrompt } from './lib/update-prompt'
 import TitleBar from './components/TitleBar.vue'
 import MarkdownPreview from './components/MarkdownPreview.vue'
 import MarkdownEditor from './components/MarkdownEditor.vue'
@@ -149,6 +150,8 @@ async function compressIfNeeded(
 onMounted(async () => {
   await store.load()
   window.addEventListener('keydown', onKeydown)
+  // 自动更新提示（非打包环境无事件，静默）
+  setupUpdatePrompt()
 })
 
 onUnmounted(() => {

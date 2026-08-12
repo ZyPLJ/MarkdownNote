@@ -208,10 +208,13 @@ const env = {
   ...(mirror?.env || {})
 }
 
-const builderStatus = run('npx', ['electron-builder', '--win'], {
-  optional: true,
-  env
-})
+// --publish never：显式禁用发布（publish 配置存在时默认可能尝试发布）。
+// latest.yml 仍会在打包阶段生成；多余参数透传便于本地测试覆盖 feed（如 -c.publish.provider=generic）。
+const builderStatus = run(
+  'npx',
+  ['electron-builder', '--win', '--publish', 'never', ...process.argv.slice(2)],
+  { optional: true, env }
+)
 
 if (mirror?.server) {
   mirror.server.close()

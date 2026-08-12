@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { NoteColor, NoteSummary } from '../../electron/shared/types'
 import { confirm } from '../lib/confirm'
+import { setupUpdatePrompt } from '../lib/update-prompt'
 
 type Tab = 'active' | 'deleted'
 
@@ -178,6 +179,8 @@ onMounted(() => {
   loadNotes()
   unsub = window.api.onNotesChanged(() => loadNotes(true))
   window.addEventListener('keydown', onKeydown)
+  // 自动更新提示（非打包环境无事件，静默）
+  setupUpdatePrompt()
 })
 
 onUnmounted(() => {
