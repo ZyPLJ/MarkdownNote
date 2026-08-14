@@ -81,6 +81,16 @@ body,
   margin: 0.45em 0;
 }
 
+/* 编辑模式回车产生的空行：预览中保持可见（高度由内联 style 按空行数设置） */
+.md-preview .md-blank {
+  height: 1.6em;
+  margin: 0;
+  list-style: none;
+}
+.md-preview li.md-blank {
+  margin: 0;
+}
+
 .md-preview ul,
 .md-preview ol {
   margin: 0.4em 0;
