@@ -186,22 +186,28 @@ onUnmounted(() => {
         {{ store.error }}
       </div>
 
-      <MarkdownEditor
-        v-else-if="store.mode === 'edit'"
-        :model-value="store.content"
-        @update:model-value="store.setContent"
-        @escape="store.enterPreview"
-        @status="setStatus"
-      />
+      <template v-else>
+        <!-- 注意：v-show 作用于多根节点组件会静默失效（MarkdownEditor 是双根：
+             CodeMirror 容器 + HighlightMenu），必须用单根容器包裹，否则编辑器
+             在任何模式下都可见。两个组件保持挂载以各自保留滚动位置。 -->
+        <div v-show="store.mode === 'edit'" class="h-full">
+          <MarkdownEditor
+            :model-value="store.content"
+            @update:model-value="store.setContent"
+            @escape="store.enterPreview"
+            @status="setStatus"
+          />
+        </div>
 
-      <MarkdownPreview
-        v-else
-        :content="store.content"
-        @dblclick="store.enterEdit"
-        @paste-image="handlePreviewImages"
-        @update-content="store.setContent"
-        @status="setStatus"
-      />
+        <MarkdownPreview
+          v-show="store.mode !== 'edit'"
+          :content="store.content"
+          @dblclick="store.enterEdit"
+          @paste-image="handlePreviewImages"
+          @update-content="store.setContent"
+          @status="setStatus"
+        />
+      </template>
 
       <!-- transient status toast -->
       <transition name="fade">
